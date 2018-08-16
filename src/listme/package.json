@@ -1,0 +1,24 @@
+{
+  "name": "listme",
+  "version": "0.0.1",
+  "description": "List AWS resources from Slack",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vsechnovcloudu/aws.listme.git"
+  },
+  "keywords": [
+    "aws",
+    "lambda",
+    "slack"
+  ],
+  "author": "David Kubec",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vsechnovcloudu/aws.listme/issues"
+  },
+  "homepage": "https://github.com/vsechnovcloudu/aws.listme#readme"
+}
