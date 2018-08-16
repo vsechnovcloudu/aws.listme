@@ -1,0 +1,81 @@
+# https://circleci.com/docs/2.0
+
+version: 2
+jobs:
+
+  build_listme_lambda:
+    working_directory: ~/aws.listme/src/listme
+    docker:
+      - image: circleci/node:8.10
+    steps:
+      - checkout:
+          path: ~/aws.listme
+      - restore_cache:
+          keys:
+          - sender-modules-{{ checksum "package.json" }}
+          - sender-modules-
+      - run:
+          name: Install modules
+          command: yarn install
+      - run:
+          name: Run tests
+          command: yarn test
+      - save_cache:
+          key: sender-modules-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+      - run:
+          name: Zipping for Lambda deployment
+          command:
+            zip -r listme-${CIRCLE_BRANCH}.zip *
+      - run:
+          name: Install AWS CLI
+          command: |
+            sudo apt-get install python-dev
+            sudo curl -O https://bootstrap.pypa.io/get-pip.py
+            sudo python get-pip.py
+            sudo pip install awscli --upgrade
+      - deploy:
+          name: Upload artifact to S3
+          command: |
+            aws s3 sync . s3://vvc.listme.ops --exclude "*" --include "listme-${CIRCLE_BRANCH}.zip"
+
+  deploy_infra:
+      docker:
+        - image: circleci/node:8.10
+      working_directory: ~/aws.listme/
+      steps:
+        - checkout
+        - run:
+            name: Install Terraform
+            command: |
+              sudo wget -O terraform.zip https://releases.hashicorp.com/terraform/0.11.8/terraform_0.11.8_linux_amd64.zip
+              sudo unzip terraform.zip -d /usr/local/bin
+        - run:
+            name: Install AWS CLI
+            command: |
+              sudo apt-get install python-dev
+              sudo curl -O https://bootstrap.pypa.io/get-pip.py
+              sudo python get-pip.py
+              sudo pip install awscli --upgrade
+        - run:
+            name: Get all artifacts from S3
+            command: |
+                aws s3 sync s3://vvc.listme.ops ./terraform --exclude "*" --include "*-${CIRCLE_BRANCH}.zip"
+        - deploy:
+            name: Terraform INIT, PLAN and APPLY
+            working_directory: ~/aws.listme/terraform
+            command: |
+              terraform init -var-file=vars/${CIRCLE_BRANCH}.tfvars -input=false
+              if (terraform workspace list | grep ${CIRCLE_BRANCH}); then terraform workspace select ${CIRCLE_BRANCH}; else terraform workspace new ${CIRCLE_BRANCH}; fi
+              terraform plan -var-file=vars/${CIRCLE_BRANCH}.tfvars -input=false
+              terraform apply -var-file=vars/${CIRCLE_BRANCH}.tfvars -auto-approve
+              
+workflows:
+  version: 2
+  build-test-and-deploy:
+    jobs:
+      - build_listme_lambda
+      - deploy_infra:
+          requires:
+            - build_listme_lambda
