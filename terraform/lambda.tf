@@ -12,7 +12,7 @@ resource "aws_lambda_function" "listme" {
 
   environment {
     variables = {
-      SLACK_TOKEN = "${var.SENDER}"
+      SLACK_TOKEN = "${var.SLACK_TOKEN}"
     }
   }
 
