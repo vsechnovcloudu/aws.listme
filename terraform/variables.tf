@@ -1,0 +1,1 @@
+variable "SLACK_TOKEN" {}
