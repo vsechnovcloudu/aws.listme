@@ -20,3 +20,12 @@ resource "aws_lambda_function" "listme" {
     Environment = "Production"
   }
 }
+
+resource "aws_lambda_permission" "allow-apigw" {
+  depends_on     = ["aws_api_gateway_method.listmeget"]
+  statement_id   = "AllowExecutionFromAPIGW"
+  action         = "lambda:InvokeFunction"
+  function_name  = "${aws_lambda_function.listme.function_name}"
+  principal      = "apigateway.amazonaws.com"
+  source_arn     = "arn:aws:execute-api:${var.REGION}:${var.aws_account_id}:${aws_api_gateway_rest_api.listme.id}/*/${aws_api_gateway_method.listmeget.http_method}${aws_api_gateway_resource.listme.path}"
+}
