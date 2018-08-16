@@ -1,5 +1,5 @@
 resource "aws_api_gateway_rest_api" "listme" {
-  depends_on  = ["aws_lambda_function.listme_lambda"]
+  depends_on  = ["aws_lambda_function.listme"]
   name        = "ListMeAPI-${terraform.workspace}"
   description = "API for Slack slash command - ListMe."
 }
