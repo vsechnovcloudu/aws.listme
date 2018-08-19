@@ -1,6 +1,6 @@
 SLACK_TOKEN = "XXXXXXXXXXXXXX"
-//ORIGIN = "vsechnovcloudu.slack.com"
-ORIGIN = "*"
+ORIGIN = "vsechnovcloudu.slack.com"
+//ORIGIN = "*"
 REGION = "eu-west-1"
 APISTAGE = "prod"
 aws_account_id = "683981514902"
