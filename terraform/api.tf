@@ -43,7 +43,7 @@ resource "aws_api_gateway_integration" "listmeget" {
   uri                     = "arn:aws:apigateway:${var.REGION}:lambda:path/2015-03-31/functions/${aws_lambda_function.listme.arn}/invocations"
   
   request_templates {
-      "application/xml" = <<EOF
+      "application/json" = <<EOF
       ##  See http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html
     ##  This template will pass through all parameters including path, querystring, header, stage variables, and context through to the integration endpoint via the body/payload
     #set($allParams = $input.params())
