@@ -22,7 +22,7 @@ exports.handler = async function(event, context, callback) {
     
     instancesData.Reservations.forEach(reservation => {
       reservation.Instances.forEach(instance => {
-        console.log(instance);
+        //console.log(instance);
         instancesList+= 'Name: ' + instance.Tags[0].Value +
         '  id: ' + instance.InstanceId +
         '  type: ' + instance.InstanceType +
