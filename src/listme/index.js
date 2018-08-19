@@ -18,10 +18,12 @@ exports.handler = async function(event, context, callback) {
     
     const instancesData = await EC2.describeInstances().promise();
     
-    let instancesList ='';
+    let instancesList = '';
+    let instanceCount = 0;
     
     instancesData.Reservations.forEach(reservation => {
       reservation.Instances.forEach(instance => {
+        instanceCount++;
         //console.log(instance);
         instancesList+= 'Name: ' + instance.Tags[0].Value +
         '  id: ' + instance.InstanceId +
@@ -34,7 +36,7 @@ exports.handler = async function(event, context, callback) {
     
     let response = {
       'response_type': 'in_channel',
-      'text': instancesList
+      'text': 'Instance count: ', instanceCount, ' \n', instancesList
     };
     
     callback(null, response);
