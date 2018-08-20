@@ -3,7 +3,7 @@ resource "aws_lambda_function" "listme" {
   function_name    = "listme-${terraform.workspace}"
   role             = "${aws_iam_role.listme_lambda.arn}"
   handler          = "index.handler"
-  s3_bucket        = "vvc.listme.ops"
+  s3_bucket        = "${var.OPS_BUCKET}"
   s3_key           = "listme-${terraform.workspace}.zip"
   runtime          = "nodejs8.10"
   timeout          = "5"
