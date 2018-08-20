@@ -37,7 +37,7 @@ exports.handler= async function(event, context, callback) {
 
 
 async function prepareParams(event) {
-  if (event.text) {
+
     let text = event.text;
     var arr= text.split(" ").map(val => val);
     if (arr.length > 1){
@@ -52,7 +52,5 @@ async function prepareParams(event) {
       } else {
         let params = {};
         return(params);
-      }
-    }
-    
+      }    
   }
