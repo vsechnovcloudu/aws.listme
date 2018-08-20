@@ -51,17 +51,6 @@ jobs:
             command: |
               sudo wget -O terraform.zip https://releases.hashicorp.com/terraform/0.11.8/terraform_0.11.8_linux_amd64.zip
               sudo unzip terraform.zip -d /usr/local/bin
-        - run:
-            name: Install AWS CLI
-            command: |
-              sudo apt-get install python-dev
-              sudo curl -O https://bootstrap.pypa.io/get-pip.py
-              sudo python get-pip.py
-              sudo pip install awscli --upgrade
-        - run:
-            name: Get all artifacts from S3
-            command: |
-                aws s3 sync s3://vvc.listme.ops ./terraform --exclude "*" --include "*-${CIRCLE_BRANCH}.zip"
         - deploy:
             name: Terraform INIT, PLAN and APPLY
             working_directory: ~/aws.listme/terraform
