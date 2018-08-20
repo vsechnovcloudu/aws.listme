@@ -1,19 +1,14 @@
-const AWS = require('aws-sdk');
+var AWS= require('aws-sdk');
+const EC2 = new AWS.EC2();
 
-exports.handler = async function(event, context, callback) {
-  const EC2 = new AWS.EC2();
-  
+exports.handler= async function(event, context, callback) {
   
   try {
     
-    const params = await createParams(event);
+    const params = await prepareParams(event);
+    console.log(JSON.stringify(params));
     
     const instancesData = await EC2.describeInstances(params).promise();
-    
-    //console.log(event.params.querystring.text);
-    //if (event.params.querystring.text != '') {} else {
-    
-    //const instancesData = await EC2.describeInstances().promise();
     
     let instancesList = '';
     let instanceCount = 0;
@@ -37,43 +32,27 @@ exports.handler = async function(event, context, callback) {
   } catch (err) {
     callback(err.message);
   }
+  
 };
 
-function parseTags(slackText, callback) {
-  var arr = slackText.split(" ").map(val => val);
-  callback(arr);
-}
 
-function createParams(event, callback) {
-  console.log(event);
-  if (event.params){
-    if(event.params.querystring){
-      if (event.params.querystring.text){
-        parseTags(event.params.querystring.text, function(tags) {
-          
-          let params = {
-            Filters: [
-              {
-                Name: 'tag:' + tags[0],
-                Values: [tags[1]]
-              }
-            ]
-          };
-          return params; 
-        });
+async function prepareParams(event) {
+  if (event.text) {
+    let text = event.text;
+    var arr= text.split(" ").map(val => val);
+    if (arr.length > 1){
+      let params = {
+        Filters: [
+          {
+            Name: 'tag:' + arr[0],
+            Values: [arr[1]]
+          }
+        ]};
+        return(params);
       } else {
-        let params = {
-          Filters: [
-            {
-              Name: null,
-              Values: null
-            }
-          ]
-        };
-        return params;
+        let params = {};
+        return(params);
       }
     }
     
   }
-  
-}
