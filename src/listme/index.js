@@ -3,20 +3,17 @@ const AWS = require('aws-sdk');
 exports.handler = async function(event, context, callback) {
   const EC2 = new AWS.EC2();
   
+  
   try {
-
-    // TODO: filter based on provided parameters, tags
-    // let params = {
-    //   Filters: [
-    //     {
-    //       Name: "", 
-    //       Values: []
-    //     }
-    //   ]
-    // };
-    // const instancesData = await EC2.describeInstances(params).promise();
     
-    const instancesData = await EC2.describeInstances().promise();
+    const params = await createParams(event);
+    
+    const instancesData = await EC2.describeInstances(params).promise();
+    
+    //console.log(event.params.querystring.text);
+    //if (event.params.querystring.text != '') {} else {
+    
+    //const instancesData = await EC2.describeInstances().promise();
     
     let instancesList = '';
     let instanceCount = 0;
@@ -24,19 +21,15 @@ exports.handler = async function(event, context, callback) {
     instancesData.Reservations.forEach(reservation => {
       reservation.Instances.forEach(instance => {
         instanceCount++;
-        //console.log(instance);
-        instancesList+= 'Name: ' + instance.Tags[0].Value +
-        '  id: ' + instance.InstanceId +
+        instancesList+= 'Instance id: ' + instance.InstanceId +
         '  type: ' + instance.InstanceType +
         '  Status: ' + instance.State.Name +'\n';
       });
     });
     
-    //console.log(instancesList);
-    
     let response = {
       'response_type': 'in_channel',
-      'text': 'Instance count: ', instanceCount, ' \n', instancesList
+      'text': 'Instance count: ' + instanceCount + ' \n' + instancesList
     };
     
     callback(null, response);
@@ -45,3 +38,42 @@ exports.handler = async function(event, context, callback) {
     callback(err.message);
   }
 };
+
+function parseTags(slackText, callback) {
+  var arr = slackText.split(" ").map(val => val);
+  callback(arr);
+}
+
+function createParams(event, callback) {
+  console.log(event);
+  if (event.params){
+    if(event.params.querystring){
+      if (event.params.querystring.text){
+        parseTags(event.params.querystring.text, function(tags) {
+          
+          let params = {
+            Filters: [
+              {
+                Name: 'tag:' + tags[0],
+                Values: [tags[1]]
+              }
+            ]
+          };
+          return params; 
+        });
+      } else {
+        let params = {
+          Filters: [
+            {
+              Name: null,
+              Values: null
+            }
+          ]
+        };
+        return params;
+      }
+    }
+    
+  }
+  
+}
