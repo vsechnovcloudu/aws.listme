@@ -2,7 +2,8 @@ var AWS= require('aws-sdk');
 const EC2 = new AWS.EC2();
 
 exports.handler= async function(event, context, callback) {
-  
+  console.log(JSON.stringify(event));
+
   try {
     
     const params = await prepareParams(event);
@@ -35,10 +36,9 @@ exports.handler= async function(event, context, callback) {
   
 };
 
-
 async function prepareParams(event) {
-
-    let text = event.text;
+  if (event.body.text) {
+    let text = event.body.text;
     var arr= text.split(" ").map(val => val);
     if (arr.length > 1){
       let params = {
@@ -52,5 +52,7 @@ async function prepareParams(event) {
       } else {
         let params = {};
         return(params);
-      }    
+      }
+    }
+    
   }
