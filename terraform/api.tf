@@ -44,18 +44,28 @@ resource "aws_api_gateway_integration" "listmeget" {
   
   request_templates {
       "application/json" = <<EOF
+      #set ($keyValues = {})
+      #set($prarametersString = $input.body)
+      #set($parameters = $prarametersString.split("&"))
+      #foreach($parameter in $parameters)
+      #set($keyValue = $parameter.split("="))
+      $keyValues.put($util.urlDecode($keyValue[0]),$util.urlDecode($keyValue[1]))
+      #end
       {
-        "text" : "$input.params('text')",
-        "channel" : "$input.params('channel')",
-        "token" : "$input.params('token')",
-        "team_id" : "$input.params('team_id')",
-        "team_domain" : "$input.params('team_domain')",
-        "channel_id" : "$input.params('channel_id')",
-        "channel_name" : "$input.params('channel_name')",
-        "user_id" : "$input.params('user_id')",
-        "user_name" : "$input.params('user_name')",
-        "command" : "$input.params('command')",
-        "response_url" : "$input.params('response_url')"
+        "headers": {
+          #foreach($param in $input.params().header.keySet())
+          "$param": "$util.escapeJavaScript($input.params().header.get($param))" #if($foreach.hasNext),#end
+          
+          #end  
+        },
+        "body": {
+          #foreach($key in $keyValues.keySet())
+          #set($value = $keyValues.get($key))
+          "$key": "$value"
+          #if($foreach.hasNext),#end
+          #end
+        },
+        "request_id" : "$context.requestId"
       }
   EOF
     }
