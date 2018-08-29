@@ -44,29 +44,29 @@ resource "aws_api_gateway_integration" "listmeget" {
   
   request_templates {
       "application/json" = <<EOF
-      #set ($keyValues = {})
-      #set($prarametersString = $input.body)
-      #set($parameters = $prarametersString.split("&"))
-      #foreach($parameter in $parameters)
-      #set($keyValue = $parameter.split("="))
-      $keyValues.put($util.urlDecode($keyValue[0]),$util.urlDecode($keyValue[1]))
-      #end
       {
         "headers": {
-          #foreach($param in $input.params().header.keySet())
-          "$param": "$util.escapeJavaScript($input.params().header.get($param))" #if($foreach.hasNext),#end
-          
-          #end  
+        #foreach($param in $input.params().header.keySet())
+        "$param": "$util.escapeJavaScript($input.params().header.get($param))" #if($foreach.hasNext),#end
+        #end
         },
         "body": {
-          #foreach($key in $keyValues.keySet())
-          #set($value = $keyValues.get($key))
-          "$key": "$value"
-          #if($foreach.hasNext),#end
-          #end
+            #foreach( $token in $input.body.split('&') )
+                #set( $keyVal = $token.split('=') )
+                #set( $keyValSize = $keyVal.size() )
+                #if( $keyValSize >= 1 )
+                    #set( $key = $util.urlDecode($keyVal[0]) )
+                    #if( $keyValSize >= 2 )
+                        #set( $val = $util.urlDecode($keyVal[1]) )
+                    #else
+                        #set( $val = '' )
+                    #end
+                    "$key": "$val"#if($foreach.hasNext),#end
+                #end
+            #end
         },
         "request_id" : "$context.requestId"
-      }
+  }
   EOF
     }
 
