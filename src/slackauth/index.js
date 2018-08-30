@@ -37,14 +37,24 @@ exports.handler = function(event, context, callback) {
     // const verifySignature = function(event) {
     //   const signature = event.headers['X-Slack-Signature'] || event.headers['x-slack-signature'];
     //   const timestamp = event.headers['X-Slack-Request-Timestamp'] || event.headers['x-slack-request-timestamp'];
-    //   const rawBody = event.rawRequest;
-    //   const hmac = crypto.createHmac('sha256', process.env.SLACK_SIGNING_SECRET);
-    //   const [version, hash] = signature.split('=');
+    //   if (verifyTimestamp(timestamp)) {
+    //     const rawBody = event.rawRequest;
+    //     const hmac = crypto.createHmac('sha256', process.env.SLACK_SIGNING_SECRET);
+    //     const [version, hash] = signature.split('=');
     // 
-    //   hmac.update(`${version}:${timestamp}:${rawBody}`);
+    //     hmac.update(`${version}:${timestamp}:${rawBody}`);
     // 
-    //   return hmac.digest('hex') === hash;
+    //     return hmac.digest('hex') === hash;
+    //   } else {
+    //     return false;
+    //   }
     // }; 
+    // 
+    // const verifyTimestamp = function(timestamp){
+    //   var currentTime = new Date().getTime() / 1000;
+    //   return (currentTime - timestamp) < 60;
+    // };
+
     
     // Now the verification happens ONLY in the listme Lambda, this simply pass through as long headers are present
     if (signature && timestamp) {
