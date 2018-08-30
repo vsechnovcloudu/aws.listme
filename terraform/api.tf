@@ -43,29 +43,30 @@ resource "aws_api_gateway_integration" "listmeget" {
   uri                     = "arn:aws:apigateway:${var.REGION}:lambda:path/2015-03-31/functions/${aws_lambda_function.listme.arn}/invocations"
   
   request_templates {
-      "application/json" = <<EOF
+      "application/x-www-form-urlencoded" = <<EOF
       {
-        "headers": {
-        #foreach($param in $input.params().header.keySet())
-        "$param": "$util.escapeJavaScript($input.params().header.get($param))" #if($foreach.hasNext),#end
-        #end
-        },
-        "body": {
-            #foreach( $token in $input.body.split('&') )
-                #set( $keyVal = $token.split('=') )
-                #set( $keyValSize = $keyVal.size() )
-                #if( $keyValSize >= 1 )
-                    #set( $key = $util.urlDecode($keyVal[0]) )
-                    #if( $keyValSize >= 2 )
-                        #set( $val = $util.urlDecode($keyVal[1]) )
-                    #else
-                        #set( $val = '' )
-                    #end
-                    "$key": "$val"#if($foreach.hasNext),#end
+    "headers": {
+    #foreach($param in $input.params().header.keySet())
+    "$param": "$util.escapeJavaScript($input.params().header.get($param))" #if($foreach.hasNext),#end
+    #end
+    },
+    "rawRequest" : "$input.body",
+    "body": {
+        #foreach( $token in $input.body.split('&') )
+            #set( $keyVal = $token.split('=') )
+            #set( $keyValSize = $keyVal.size() )
+            #if( $keyValSize >= 1 )
+                #set( $key = $util.urlDecode($keyVal[0]) )
+                #if( $keyValSize >= 2 )
+                    #set( $val = $util.urlDecode($keyVal[1]) )
+                #else
+                    #set( $val = '' )
                 #end
+                "$key": "$val"#if($foreach.hasNext),#end
             #end
-        },
-        "request_id" : "$context.requestId"
+        #end
+    },
+    "requestId" : "$context.requestId"
   }
   EOF
     }
