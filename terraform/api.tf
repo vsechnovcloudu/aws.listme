@@ -147,7 +147,7 @@ resource "aws_api_gateway_stage" "production" {
 resource "aws_api_gateway_deployment" "listme" {
   depends_on = ["aws_api_gateway_integration.listmeget"]
   rest_api_id = "${aws_api_gateway_rest_api.listme.id}"
-  stage_name = "${var.APISTAGE}"
+  stage_name = "dev"
   stage_description = "Latest"
   stage_description = "Deployed at ${timestamp()}"
   lifecycle {
