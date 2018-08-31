@@ -5,6 +5,7 @@ resource "aws_lambda_function" "listme" {
   handler          = "index.handler"
   s3_bucket        = "${var.OPS_BUCKET}"
   s3_key           = "listme-${terraform.workspace}.zip"
+  source_code_hash = "${timestamp()}" // Enforcing deployment every time.
   runtime          = "nodejs8.10"
   timeout          = "5"
   memory_size      = "1536"
