@@ -26,7 +26,7 @@ resource "aws_api_gateway_method_response" "listmeget" {
   http_method = "${aws_api_gateway_method.listmeget.http_method}"
   status_code = "200"
   response_models {
-    "application/json" = "Empty"
+    "application/x-www-form-urlencoded" = "Empty"
   }
   response_parameters {
     "method.response.header.Access-Control-Allow-Origin"  = true
