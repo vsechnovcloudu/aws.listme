@@ -17,6 +17,9 @@ resource "aws_api_gateway_method" "listmeget" {
   resource_id   = "${aws_api_gateway_resource.listme.id}"
   http_method   = "POST"
   authorization = "NONE"
+  request_models {
+    "application/x-www-form-urlencoded" = "Empty"
+  }
 }
 
 resource "aws_api_gateway_method_response" "listmeget" {
