@@ -9,13 +9,13 @@ resource "aws_kms_alias" "secretmanagement" {
   target_key_id = "${aws_kms_key.secretmanagement.key_id}"
 }
 
-data "aws_secretsmanager_secret" "slacksecret" {
-  name = "slack/signisecret"
+resource "aws_secretsmanager_secret" "slacksecret" {
+  name = "slack/secretsignature"
 }
 
-data "aws_secretsmanager_secret_version" "slacksecret" {
-  secret_id     = "slack/signisecret"
-}
+# data "aws_secretsmanager_secret" "slacksecret" {
+#   name = "slack/signisecret"
+# }
 
 data "aws_iam_policy_document" "accesskms" {
 
@@ -47,7 +47,7 @@ data "aws_iam_policy_document" "accesssecrets" {
       "secretsmanager:GetSecretValue"
     ]
     
-    resources = ["${data.aws_secretsmanager_secret.slacksecret.arn}"]
+    resources = ["${aws_secretsmanager_secret.slacksecret.arn}"]
   }
 }
 
