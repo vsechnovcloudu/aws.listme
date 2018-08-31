@@ -83,10 +83,6 @@ resource "aws_api_gateway_integration_response" "listmeget" {
   http_method = "${aws_api_gateway_method.listmeget.http_method}"
   status_code = "${aws_api_gateway_method_response.listmeget.status_code}"
 
-  response_templates {
-    "application/json" = ""
-  }
-
   response_parameters {
     "method.response.header.Access-Control-Allow-Origin" = "'${var.ORIGIN}'"
   }
