@@ -11,3 +11,7 @@ resource "aws_kms_alias" "secretmanagement" {
 data "aws_secretsmanager_secret" "slacksecret" {
   name = "slack/signisecret"
 }
+
+data "aws_secretsmanager_secret_version" "slacksecret" {
+  secret_id     = "slack/signisecret"
+}
