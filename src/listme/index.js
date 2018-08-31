@@ -71,7 +71,7 @@ const verifySignature = function(event) {
   const timestamp = event.headers['X-Slack-Request-Timestamp'] || event.headers['x-slack-request-timestamp'];
   if (verifyTimestamp(timestamp)) {
     const rawBody = event.rawRequest;
-    const hmac = crypto.createHmac('sha256', process.env.SLACK_SIGNING_SECRET);
+    const hmac = crypto.createHmac('sha256', process.env.SLACK_SIGNING_SECRET.SLACK_TOKEN);
     const [version, hash] = signature.split('=');
     
     hmac.update(`${version}:${timestamp}:${rawBody}`);
