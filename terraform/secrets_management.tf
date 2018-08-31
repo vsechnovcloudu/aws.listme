@@ -19,7 +19,7 @@ data "aws_iam_policy_document" "accesskms" {
     sid = "Root access"
     principals {
       type        = "AWS"
-      identifiers = "arn:aws:iam::${aws_account_id}:root"
+      identifiers = "arn:aws:iam::${var.aws_account_id}:root"
     }
     actions = [
       "kms:*"
