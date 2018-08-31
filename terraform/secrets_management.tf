@@ -1,7 +1,7 @@
 resource "aws_kms_key" "secretmanagement" {
   description             = "This key is used to encrypt secrets in the vault"
   deletion_window_in_days = 10
-  policy                  = "${aws_iam_policy.accesskms.arn}"
+  policy                  = "${data.aws_iam_policy_document.accesskms.json}"
 }
 
 resource "aws_kms_alias" "secretmanagement" {
@@ -30,13 +30,13 @@ data "aws_iam_policy_document" "accesskms" {
   }
 }
 
-resource "aws_iam_policy" "accesskms" {
-
-  name   = "listme-accesskms-${terraform.workspace}"
-  path   = "/"
-  policy = "${data.aws_iam_policy_document.accesskms.json}"
-  description = "Policy allowing to access KMS key for secrets decryption."
-}
+# resource "aws_iam_policy" "accesskms" {
+# 
+#   name   = "listme-accesskms-${terraform.workspace}"
+#   path   = "/"
+#   policy = "${data.aws_iam_policy_document.accesskms.json}"
+#   description = "Policy allowing to access KMS key for secrets decryption."
+# }
 
 data "aws_iam_policy_document" "accesssecrets" {
 
