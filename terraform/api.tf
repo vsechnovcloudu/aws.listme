@@ -44,7 +44,7 @@ resource "aws_api_gateway_integration" "listmeget" {
   integration_http_method = "POST"
   type                    = "AWS"
   uri                     = "arn:aws:apigateway:${var.REGION}:lambda:path/2015-03-31/functions/${aws_lambda_function.listme.arn}/invocations"
-  
+  passthrough_behavior    = "WHEN_NO_TEMPLATES"
   request_templates {
       "application/x-www-form-urlencoded" = <<EOF
   {
