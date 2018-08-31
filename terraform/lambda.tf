@@ -12,7 +12,7 @@ resource "aws_lambda_function" "listme" {
 
   environment {
     variables = {
-      SLACK_SIGNING_SECRET = "${aws_secretsmanager_secret_version.slacksecret.secret.string}"
+      SLACK_SIGNING_SECRET = "${data.aws_secretsmanager_secret_version.slacksecret.secret_string}"
     }
   }
 
