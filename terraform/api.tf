@@ -142,13 +142,13 @@ resource "aws_api_gateway_method_response" "cors-listme" {
   }
 }
 
-# resource "aws_api_gateway_deployment" "listme" {
-#   depends_on = ["aws_api_gateway_integration.listmeget"]
-#   rest_api_id = "${aws_api_gateway_rest_api.listme.id}"
-#   stage_name = "${var.APISTAGE}"
-#   stage_description = "Latest"
-#   stage_description = "Deployed at ${timestamp()}"
-#   lifecycle {
-#     create_before_destroy = true
-#   }
-# }
+resource "aws_api_gateway_deployment" "listme" {
+  depends_on = ["aws_api_gateway_integration.listmeget"]
+  rest_api_id = "${aws_api_gateway_rest_api.listme.id}"
+  stage_name = "${var.APISTAGE}"
+  stage_description = "Latest"
+  stage_description = "Deployed at ${timestamp()}"
+  lifecycle {
+    create_before_destroy = true
+  }
+}
