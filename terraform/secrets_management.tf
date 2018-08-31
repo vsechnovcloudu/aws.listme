@@ -52,7 +52,7 @@ data "aws_iam_policy_document" "accesssecrets" {
 }
 
 resource "aws_iam_policy" "accesssecrets" {
-  depends_on = ["aws_secretsmanager_secret.slacksecret"]
+
   name   = "listme-accesssecrets-${terraform.workspace}"
   path   = "/"
   policy = "${data.aws_iam_policy_document.accesssecrets.json}"
