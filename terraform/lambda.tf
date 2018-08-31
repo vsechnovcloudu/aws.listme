@@ -1,5 +1,5 @@
 resource "aws_lambda_function" "listme" {
-  depends_on       = ["aws_iam_role.listme_lambda"]
+  depends_on       = ["aws_iam_role.listme_lambda", "aws_kms_key.secretmanagement", "data.aws_secretsmanager_secret.slacksecret" ]
   function_name    = "listme-${terraform.workspace}"
   role             = "${aws_iam_role.listme_lambda.arn}"
   handler          = "index.handler"
@@ -12,7 +12,7 @@ resource "aws_lambda_function" "listme" {
 
   environment {
     variables = {
-      SLACK_SIGNING_SECRET = "${data.aws_secretsmanager_secret_version.slacksecret.secret_string}"
+      SLACK_SECRET_NAME = "${data.aws_secretsmanager_secret.slacksecret.name}"
     }
   }
 
