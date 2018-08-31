@@ -11,7 +11,12 @@ resource "aws_kms_alias" "secretmanagement" {
 
 resource "aws_secretsmanager_secret" "slacksecret" {
   name = "slack/secretsignature"
+  kms_key_id = "${aws_kms_key.secretmanagement.key_id}"
 }
+
+// To set the password manually:
+// aws secretsmanager update-secret --secret-id slack/secretsignature --secret-string '{"SLACK_TOKEN":"newPassword"}'
+// This should be done by additional Lambda via SlackAPI call.
 
 data "aws_iam_policy_document" "accesskms" {
 
