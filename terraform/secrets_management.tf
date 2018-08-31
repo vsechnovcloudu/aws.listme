@@ -1,7 +1,7 @@
 resource "aws_kms_key" "secretmanagement" {
-  description             = "This key is used to encrypt secrets in the vault"
+  description             = "Used to encrypt secrets in the vault, master key"
   deletion_window_in_days = 10
-  policy                  = "${data.aws_iam_policy_document.accesskms.rendered}"
+  policy                  = "${data.aws_iam_policy_document.accesskms.json}"
 }
 
 resource "aws_kms_alias" "secretmanagement" {
@@ -13,30 +13,38 @@ resource "aws_secretsmanager_secret" "slacksecret" {
   name = "slack/secretsignature"
 }
 
-# data "aws_secretsmanager_secret" "slacksecret" {
-#   name = "slack/signisecret"
-# }
-
 data "aws_iam_policy_document" "accesskms" {
 
   statement {
-    sid = "1"
-    principal = 
+    sid = "Root access"
+    principals {
+      type        = "AWS"
+      identifiers = "arn:aws:iam::${aws_account_id}:root"
+    }
     actions = [
-      "kms:DescribeKey"
+      "kms:*"
     ]
     
-    resources = ["${aws_kms_key.secretmanagement.arn}"]
+    resources = ["*"]
+  }
+  
+  statement {
+    sid = "User access"
+    principals {
+      type        = "AWS"
+      identifiers = "${aws_iam_role.listme_lambda.arn}"
+    }
+    actions = [
+        "kms:Encrypt",
+        "kms:Decrypt",
+        "kms:ReEncrypt*",
+        "kms:GenerateDataKey*",
+        "kms:DescribeKey"
+    ]
+    
+    resources = ["*"]
   }
 }
-
-# resource "aws_iam_policy" "accesskms" {
-# 
-#   name   = "listme-accesskms-${terraform.workspace}"
-#   path   = "/"
-#   policy = "${data.aws_iam_policy_document.accesskms.json}"
-#   description = "Policy allowing to access KMS key for secrets decryption."
-# }
 
 data "aws_iam_policy_document" "accesssecrets" {
 
@@ -57,4 +65,9 @@ resource "aws_iam_policy" "accesssecrets" {
   path   = "/"
   policy = "${data.aws_iam_policy_document.accesssecrets.json}"
   description = "Policy allowing to access secrets in the vault."
+}
+
+resource "aws_iam_role_policy_attachment" "accesssecrets" {
+    role       = "${aws_iam_role.listme_lambda.name}"
+    policy_arn = "${aws_iam_policy.accesssecrets.arn}"
 }
