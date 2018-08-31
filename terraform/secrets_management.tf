@@ -1,7 +1,7 @@
 resource "aws_kms_key" "secretmanagement" {
   description             = "This key is used to encrypt secrets in the vault"
   deletion_window_in_days = 10
-  policy                  = "${data.aws_iam_policy_document.accesskms.json}"
+  policy                  = "${data.aws_iam_policy_document.accesskms.rendered}"
 }
 
 resource "aws_kms_alias" "secretmanagement" {
@@ -21,7 +21,7 @@ data "aws_iam_policy_document" "accesskms" {
 
   statement {
     sid = "1"
-
+    principal = 
     actions = [
       "kms:DescribeKey"
     ]
