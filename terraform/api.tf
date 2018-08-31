@@ -139,6 +139,7 @@ resource "aws_api_gateway_method_response" "cors-listme" {
 }
 
 resource "aws_api_gateway_stage" "production" {
+  depends_on = ["aws_api_gateway_deployment.listme"]
   stage_name = "${var.APISTAGE}"
   rest_api_id = "${aws_api_gateway_rest_api.listme.id}"
   deployment_id = "${aws_api_gateway_deployment.listme.id}"
