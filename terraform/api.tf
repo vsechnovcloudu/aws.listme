@@ -29,7 +29,7 @@ resource "aws_api_gateway_method_response" "listmeget" {
   http_method = "${aws_api_gateway_method.listmeget.http_method}"
   status_code = "200"
   response_models {
-    "application/x-www-form-urlencoded" = "Empty"
+    "application/json" = "Empty"
   }
   response_parameters {
     "method.response.header.Access-Control-Allow-Origin"  = true
@@ -138,10 +138,16 @@ resource "aws_api_gateway_method_response" "cors-listme" {
   }
 }
 
+resource "aws_api_gateway_stage" "production" {
+  stage_name = "prod"
+  rest_api_id = "${aws_api_gateway_rest_api.listme.id}"
+  deployment_id = "${aws_api_gateway_deployment.test.id}"
+}
+
 resource "aws_api_gateway_deployment" "listme" {
   depends_on = ["aws_api_gateway_integration.listmeget"]
   rest_api_id = "${aws_api_gateway_rest_api.listme.id}"
-  stage_name = "${var.APISTAGE}"
+  stage_name = "${aws_api_gateway_stage.production.stage_name}"
   stage_description = "Latest"
   stage_description = "Deployed at ${timestamp()}"
   lifecycle {
