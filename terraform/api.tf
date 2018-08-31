@@ -15,7 +15,7 @@ resource "aws_api_gateway_method" "listmeget" {
   depends_on    = ["aws_api_gateway_rest_api.listme"]
   rest_api_id   = "${aws_api_gateway_rest_api.listme.id}"
   resource_id   = "${aws_api_gateway_resource.listme.id}"
-  http_method   = "GET"
+  http_method   = "POST"
   authorization = "NONE"
 }
 
