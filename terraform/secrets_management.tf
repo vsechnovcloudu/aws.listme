@@ -31,7 +31,7 @@ data "aws_iam_policy_document" "accesskms" {
 }
 
 resource "aws_iam_policy" "accesskms" {
-  depends_on = ["aws_kms_key.secretmanagement"]
+
   name   = "listme-accesskms-${terraform.workspace}"
   path   = "/"
   policy = "${data.aws_iam_policy_document.accesskms.json}"
