@@ -44,7 +44,7 @@ resource "aws_api_gateway_integration" "listmeget" {
   
   request_templates {
       "application/x-www-form-urlencoded" = <<EOF
-      {
+  {
     "headers": {
     #foreach($param in $input.params().header.keySet())
     "$param": "$util.escapeJavaScript($input.params().header.get($param))" #if($foreach.hasNext),#end
