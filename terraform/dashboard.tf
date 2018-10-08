@@ -15,9 +15,9 @@ resource "aws_cloudwatch_dashboard" "main" {
                     [ ".", "Errors", ".", ".", ".", ".", { "period": 86400, "stat": "Sum" } ]
                 ],
                 "view": "timeSeries",
-                "stacked": false,
-                "region": "eu-west-1",
-                "title": "Slack commands in time",
+                "stacked": true,
+                "region": "${var.REGION}",
+                "title": "Slack requests",
                 "period": 300
             }
         },
@@ -29,12 +29,15 @@ resource "aws_cloudwatch_dashboard" "main" {
             "height": 6,
             "properties": {
                 "metrics": [
-                    [ "AWS/Lambda", "Throttles", "FunctionName", "${aws_lambda_function.listme.function_name}", "Resource", "${aws_lambda_function.listme.function_name}", { "period": 60 } ]
+                    [ "AWS/Lambda", "Duration", "FunctionName", "${aws_lambda_function.listme.function_name}", "Resource", "${aws_lambda_function.listme.function_name}", { "stat": "Minimum", "period": 3600 } ],
+                    [ "...", { "stat": "Average", "period": 3600 } ],
+                    [ "...", { "stat": "Maximum", "period": 3600 } ]
                 ],
+                "region": "${var.REGION}",
                 "view": "timeSeries",
                 "stacked": true,
-                "region": "eu-west-1",
-                "title": "Slack command throttles"
+                "title": "Runtime",
+                "period": 300
             }
         },
         {
@@ -45,12 +48,12 @@ resource "aws_cloudwatch_dashboard" "main" {
             "height": 12,
             "properties": {
                 "metrics": [
-                    [ "AWS/Lambda", "Invocations", "FunctionName", "${aws_lambda_function.listme.function_name}", "Resource", "${aws_lambda_function.listme.function_name}", { "period": 86400, "stat": "Sum" } ]
+                    [ "AWS/Lambda", "Invocations", "FunctionName", "${aws_lambda_function.listme.function_name}", "Resource", "${aws_lambda_function.listme.function_name}", { "stat": "Sum", "period": 86400 } ]
                 ],
+                "region": "${var.REGION}",
                 "view": "singleValue",
-                "region": "eu-west-1",
-                "period": 300,
-                "title": "Slack commands"
+                "stacked": false,
+                "period": 300
             }
         }
     ]
