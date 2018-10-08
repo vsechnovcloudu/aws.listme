@@ -16,7 +16,7 @@ resource "aws_secretsmanager_secret" "slacksecret" {
 
 // To set the password manually:
 // aws secretsmanager update-secret --secret-id slack/secretsignature --secret-string '{"SLACK_TOKEN":"newPassword"}'
-// This should be done by additional Lambda via SlackAPI call.
+// This should be done by additional Lambda via SlackAPI call. Not yet possible due lack of feature on Slack side.
 
 data "aws_iam_policy_document" "accesskms" {
 
